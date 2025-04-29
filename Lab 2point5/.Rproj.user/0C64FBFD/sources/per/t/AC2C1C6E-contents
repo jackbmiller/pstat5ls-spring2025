@@ -1,0 +1,317 @@
+---
+title: "PSTAT 5LS Lab 2.5"
+author: "YOUR NAME HERE"
+date: "Spring 2025"
+output:
+  beamer_presentation:
+    theme: AnnArbor
+    fig_crop: false
+    fig_width: 6
+    fig_height: 4
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stats250sbi)
+```
+
+# Announcements & Recap
+
+## Announcements
+
+Insert any relevant announcements, important dates, things you want to remember here.
+
+## HW Recap
+
+Write down some common errors that you spotted while you graded/had office hours for HW assignments.
+
+# Learning Objectives
+
+## R Learning Objectives
+1. Learn how to visualize the normal distribution using `plot_norm()`
+1. Learn how to use `pnorm()` to find probabilities under the normal curve
+1. Learn how to use `qnorm()` to find values of a normally distributed variable with specified probability to the left or the right
+
+## Statistical Learning Objectives
+1. Understand how area under the normal curve relates to probability
+1. Understand how to move between probabilities and quantiles of the normal distribution
+
+## Functions covered in this lab
+1. `plot_norm()`
+1. `pnorm()`
+1. `qnorm()`
+
+# Lab Tutorial
+
+## Normal Distributions
+Recall that a "distribution" refers to the possible values a random variable can take as well as the probability that it takes those values. 
+
+The normal distribution is commonly used to approximate all sorts of things in nature and life. A normal distribution is completely described by just two values: the **mean** and the **standard deviation**. The mean and standard deviation are called *parameters* of the distribution.
+
+The mean $\mu$ specifies the *center* of the distribution. The standard deviation $\sigma$ specifies the *variability* of the distribution (meaning, how narrow or wide it is).
+
+We denote a normal distribution by N($\mu$, $\sigma$), where $\mu$ is the population mean and $\sigma$ is the population standard deviation. 
+
+Normal distributions are all bell-shaped, unimodal, and symmetric about their means, regardless of the values of the mean ($\mu$) and the standard deviation ($\sigma$). 
+
+## The Standard Normal Distribution
+As discussed in lecture, early statisticians did not have the technology we have at our disposal to find probabilities for variables that have normal distributions. They found probabilities under the normal curve by "standardizing" their variables:
+
+\begin{block}{Standardizing a Random Variable}
+If a random variable $X$ has a N($\mu$, $\sigma$) distribution, then the random variable 
+$$z = \frac{x - \mu}{\sigma}$$
+has the \textbf{standard normal} N(0, 1) distribution, which is a normal distribution with mean 0 and standard deviation 1.
+\end{block}
+
+They then used a standard normal table to estimate probabilities.
+
+## The Standard Normal Distribution
+Here's a look at the standard normal distribution.
+
+```{r normaldist, echo = FALSE}
+plot_norm(mean = 0, sd = 1)
+```
+
+## Visualizing a Normal Distribution with `plot_norm()`
+The `stats250sbi` package that we are using includes the `plot_norm()` function to help you create a graphical display of a normal distribution. You will need to send the function the following arguments:
+
+- `mean`: the mean of the normal distribution you'd like to draw ($\mu$)
+- `sd`: the standard deviation or standard error of the normal distribution you'd like to draw ($\sigma$ or $\sqrt{\frac{p_0(1-p_0)}{n}}$, respectively)
+- `shadeValues` (optional): either a number or a vector of two numbers (using `c()`) that are the boundaries of the region you'd like to shade.
+- `direction`: where to shade (`"less"`, `"greater"`, `"between"`, or `"beyond"`)
+- `col.shade`: the color to use when shading
+- any other graphical parameters you want to use to control the appearance of the plot (like `main`, etc.)
+
+## Example: AP Statistics Scores
+Suppose that test scores of AP Statistics students can be described by a normal distribution with mean 2.85 and standard deviation 0.43.
+
+What proportion of AP Statistics test scores are less than 2?
+
+## Example: AP Statistics Scores
+What does the proportion of AP Statistics test scores less than 2 look like? 
+
+Let's use `plot_norm()` to find out. Here is the code that we need:
+
+```{r normalDistCode_less2, eval = FALSE}
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = 2, 
+          direction = "less", 
+          col.shade = "cornflowerblue")
+```
+
+## Example: AP Statistics Scores
+What does the proportion of AP Statistics test scores less than 2 look like? Run the `tryIt1` code chunk in your notes document. Be sure to run the setup chunk at the top of your notes document first so that R is able to use the `plot_norm()` function!  
+
+```{r normalDist_less2, echo = FALSE, fig.align = "center", out.width = "80%"}
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = 2, 
+          direction = "less", 
+          col.shade = "cornflowerblue")
+```
+
+## Example: AP Statistics Scores
+How do we calculate the proportion of AP Statistics test scores are less than 2?
+
+To answer this question, we will use the `pnorm()` function.
+
+## Finding Probabilities with the `pnorm()` Function
+The `pnorm()` function gives us a way to compute probabilities when a variable has a normal distribution. The arguments you need to send to `pnorm()` are:
+
+- `q`: the quantile (value on the x-axis) for the normal distribution
+- `mean`: the mean of the normal distribution ($\mu$)
+- `sd`: the standard deviation of the normal distribution ($\sigma$)
+- `lower.tail`: set to \textcolor{blue}{`TRUE`} as the default, signifying that R will compute the probability **to the \textcolor{blue}{LEFT}** of `q`; if you would like R to compute the probability *to the \textcolor{red}{right}* of `q`, set `lower.tail` to \textcolor{red}{FALSE}
+
+## Example: AP Statistics Scores
+What proportion of AP Statistics test scores are less than 2? 
+
+In the `tryIt2` code chunk in your notes, fill in the values for `q`, `mean`, `sd`, and `lower.tail` to calculate the proportion of AP Statistics test scores less than 2. Then run the chunk.
+
+```{r normalProbCode_lessthan2, eval = FALSE}
+pnorm(q = 2, 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = TRUE)
+```
+
+## Example: AP Statistics Scores
+What proportion of AP Statistics test scores are less than 2? 
+
+```{r normalProb_lessthan2, echo = TRUE}
+pnorm(q = 2, 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = TRUE)
+```
+
+The R output tells us that about 2.4% of AP Statistics test scores are less than 2.
+
+## Example: AP Statistics Scores
+Calculate the percentage of AP Statistics test scores that are between 3 and 3.5. 
+First, let's see what this looks like. Run the `tryIt3` code chunk in your notes to see this yourself.
+
+```{r normalDistPlot_between, echo = FALSE, out.width="85%", fig.align="center"}
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = c(3, 3.5), 
+          direction = "between", 
+          col.shade = "cornflowerblue")
+```
+
+## Example: AP Statistics Scores
+We can find the area between 3 and 3.5 by taking the area to the left of 3.5 and subtracting the area to the left of 3:
+
+::: columns
+::: {.column width="50%"}
+```{r, echo = FALSE, fig.align = "center"}
+plot_norm(mean = 2.85,
+          sd = 0.43,
+          shadeValues = 3.5,
+          direction = "less",
+          col.shade = "cornflowerblue")
+```
+:::
+
+::: {.column width="50%"}
+```{r, echo = FALSE, fig.align = "center"}
+plot_norm(mean = 2.85,
+          sd = 0.43,
+          shadeValues = 3,
+          direction = "less",
+          col.shade = "cornflowerblue")
+```
+:::
+:::
+
+## Example: AP Statistics Scores
+We can use the `pnorm()` function to find the area to the left (or right) of a specified value, so to find the area between two values, we need to do a little subtraction.
+
+Below is a start to the code we need, complete the code in the `tryIt4` code chunk in your notes and then run the chunk.
+
+```{r normalDistCode_subtract, eval = FALSE}
+pnorm(3.5, mean = 2.85, sd = 0.43, lower.tail = TRUE) 
+
+```
+
+## Example: AP Statistics Scores
+R will return the area under the curve, which in this case is the proportion of AP Statistics test scores that are between 3 and 3.5. Then multiply by 100% to get the percentage.
+
+```{r normalDist_subtract, echo = TRUE}
+pnorm(3.5, mean = 2.85, sd = 0.43, lower.tail = TRUE) - 
+  pnorm(3, mean = 2.85, sd = 0.43, lower.tail = TRUE)
+
+```
+
+Approximately 29.8% of AP Statistics test scores are between 3 and 3.5.
+
+## Example: AP Statistics Scores
+What percentage of AP Statistics text scores are higher than 3? 
+
+```{r normalPlot_greater3, echo = FALSE, out.height="60%", fig.align="center"}
+plot_norm(mean = 2.85, 
+          sd = 0.43, 
+          shadeValues = 3, 
+          direction = "greater",  
+          col.shade = "cornflowerblue")
+```
+
+## Example: AP Statistics Scores
+What percentage of AP Statistics text scores are higher than 3? Here we need to change the `lower.tail` argument to FALSE since we want the area to the right. Make this adjustment in the `tryIt5` code chunk and run the chunk.
+
+```{r, normalCode_greater3, echo = TRUE}
+pnorm(q = 3, mean = 2.85, sd = 0.43, lower.tail = FALSE)
+
+```
+
+## Example: AP Statistics Scores
+What score does an AP Statistics student need to be in the top 5%? 
+
+A student who has a score in the top 5% is at the 95th percentile.
+
+Um, wait. We can't do this with `pnorm()`!
+
+## Finding Values of the Variable with the `qnorm()` Function
+The `qnorm()` function gives us a way to find the values of a normally distributed variable when you are given a probability. The arguments you need to send to `qnorm()`:
+
+- `p`: the probability or area under the curve you want to find an x-axis value for
+- `mean`: the mean of the normal distribution, defaults to 0
+- `sd`: the standard deviation of the normal distribution, defaults to 1
+- `lower.tail`: determines whether `qnorm()` finds the value of the variable with area `p` to its left or right. If `lower.tail` is set to \textcolor{blue}{`TRUE`} (the default), the area `p` is to the \textcolor{blue}{LEFT}. If `lower.tail` is set to \textcolor{red}{`FALSE`}, the area `p` is to the \textcolor{red}{RIGHT}.
+
+## Example: AP Statistics Scores
+We can find the score the student needs in one of two ways: 
+
+\vspace{0.5cm}
+
+::: columns
+::: {.column width="45%"}
+We can use `p = 0.95` and `lower.tail = TRUE` which tells R that we want the score that has area \textcolor{blue}{0.95} to the \textcolor{blue}{left}:
+```{r, qnormScore1, eval = FALSE}
+qnorm(p = 0.95,
+      mean = 2.85,
+      sd = 0.43,
+      lower.tail = TRUE)
+```
+:::
+
+::: {.column width="45%"}
+Or we can use `p = 0.05` and `lower.tail = FALSE` which tells R that we want the score that has area \textcolor{red}{0.05} to the \textcolor{red}{right}:
+```{r qnormScore2, eval = FALSE}
+qnorm(p = 0.05,
+      mean = 2.85,
+      sd = 0.43,
+      lower.tail = FALSE)
+```
+:::
+:::
+
+## Example: AP Statistics Scores
+Hopefully it doesn't surprise you that the probabilities are the same: 
+
+\vspace{0.5cm}
+
+::: columns
+::: {.column width="45%"}
+```{r, qnormScore1b, echo = TRUE}
+qnorm(p = 0.95,
+      mean = 2.85,
+      sd = 0.43,
+      lower.tail = TRUE)
+```
+:::
+
+::: {.column width="45%"}
+```{r qnormScore2b, echo = TRUE}
+qnorm(p = 0.05,
+      mean = 2.85,
+      sd = 0.43,
+      lower.tail = FALSE)
+```
+:::
+:::
+
+## Example: AP Statistics Scores
+What score does an AP Statistics student need to be in the top 10%? 
+
+Enter the code in the `tryIt6` code chunk in your notes and run it to find out.
+
+## Example: AP Statistics Scores
+What score does an AP Statistics student need to be in the top 10%? 
+
+Did you get the following answer?
+
+```{r top10, echo = TRUE, out.width = "80%", fig.align="center"}
+qnorm(p = 0.10, 
+      mean = 2.85, 
+      sd = 0.43, 
+      lower.tail = FALSE)
+```
+
+An AP Statistics student would need to score 3.4 or more on the AP Statistics exam to be in the top 10%. (Note that AP scores are only reported as integers, so this merely serves as an exercise.)
+
+# Questions
+
+## What Questions Do You Have?
